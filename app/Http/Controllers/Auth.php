@@ -44,19 +44,32 @@ class Auth extends Controller
             'password' => 'required|string',
         ]);
 
+        // Check if the user already exists
+        $existingUser = User::where('email', $validatedData['email'])->first();
+        if ($existingUser) {
+            return response()->json([
+                'message' => 'User already exists'
+            ], 409);
+        }
+        //Check if the password empty
+        if (empty($validatedData['password'])) {
+            return response()->json([
+                'message' => 'Password is required'
+            ], 422);
+        }
+
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
+        // Automatically log in the user after registration
+        $token = $user->createToken('token-name')->plainTextToken;
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ]);
+            'token' => $token,
+            'userName' => $user->name
+        ], 201);
     }
 
 }
