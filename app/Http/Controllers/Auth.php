@@ -20,20 +20,22 @@ class Auth extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+            throw ValidationException::withMessages([
+                'email' => ['As credenciais informadas estão incorretas.']
+            ]);
 
-        return response()->json([
-            'token' => $user->createToken('token-name')->plainTextToken,
-            'userName' => $user->name
-        ], 200);
+            $token = $user->createToken('auth_token')->plainTextToken;
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user
+            ]);
+        }
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'logged out']);
     }
 
     public function register(Request $request)
@@ -44,32 +46,19 @@ class Auth extends Controller
             'password' => 'required|string',
         ]);
 
-        // Check if the user already exists
-        $existingUser = User::where('email', $validatedData['email'])->first();
-        if ($existingUser) {
-            return response()->json([
-                'message' => 'User already exists'
-            ], 409);
-        }
-        //Check if the password empty
-        if (empty($validatedData['password'])) {
-            return response()->json([
-                'message' => 'Password is required'
-            ], 422);
-        }
-
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ]);
 
-        // Automatically log in the user after registration
-        $token = $user->createToken('token-name')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
-            'token' => $token,
-            'userName' => $user->name
-        ], 201);
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ]);
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace ApiMultipurpose\Exceptions;
 
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Throwable;
