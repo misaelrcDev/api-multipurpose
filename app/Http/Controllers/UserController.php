@@ -3,84 +3,59 @@
 namespace ApiMultipurpose\Http\Controllers;
 
 use ApiMultipurpose\Models\User;
+use ApiMultipurpose\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(protected UserRepository $userRepository)
+    {
+    }
+
     public function index()
     {
-        // Fetch all users
-        $users = User::all();
+        return $this->userRepository->all();
 
-        // Return the users as a JSON response
-        return response()->json($users);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        // Fetch a user by ID
-        $user = User::find($id);
-
-        // Check id the user exists
+        $user = $this->userRepository->find($id);
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
-        // Return the user as a JSON response
         return response()->json($user);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        // Validate the request data
-        $request->validate([
-            'name' => 'string|max:255',
-            'email' => 'string|email|max:255',
-            'avatar' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
-        ]);
-        // Edit profile
-        $user = User::find($id);
+        $user = $this->userRepository->find($id);
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Processamento do avatar
+        // Validate request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'password' => 'nullable|string|min:8',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Update user
+        $data = $request->all();
         if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
-
-            // Verifica se o avatar atual existe antes de deletar
-            if (!is_null($user->avatar)) {
-                Storage::disk('public')->delete($user->avatar);
+            // Delete old avatar
+            if ($user->avatar) {
+                Storage::delete($user->avatar);
             }
-
-            // Salva o novo arquivo
-            $path = $file->store('avatars', 'public');
-            $user->avatar = $path;
+            // Store new avatar
+            $data['avatar'] = $request->file('avatar')->store('avatars');
         }
+        $this->userRepository->update($id, $data);
 
-        $user->name = $request->input('name', $user->name);
-        $user->email = $request->input('email', $user->email);
-        $user->save();
-        return response()->json([
-            'message' => 'User updated successfully',
-            'user' => $user]);
+        return response()->json(['message' => 'User updated successfully']);
     }
 
     /**
@@ -88,12 +63,19 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        // Delete user
-        $user = User::find($id);
+        $user = $this->userRepository->find($id);
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
-        $user->delete();
+
+        // Delete avatar
+        if ($user->avatar) {
+            Storage::delete($user->avatar);
+        }
+
+        // Delete user
+        $this->userRepository->destroy($id);
+
         return response()->json(['message' => 'User deleted successfully']);
     }
 }
