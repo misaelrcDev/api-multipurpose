@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [Auth::class, 'register']);
 Route::post('/login', [Auth::class, 'login']);
+Route::post('/logout', [Auth::class, 'logout'])->middleware('auth:sanctum');
 
 Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], fn () => [
     Route::get('/', [UserController::class, 'index']),
