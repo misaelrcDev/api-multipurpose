@@ -1,10 +1,8 @@
 <?php
 
-use ApiMultipurpose\Http\Controllers\Auth;
-use ApiMultipurpose\Http\Controllers\LoginController;
-use ApiMultipurpose\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use ApiMultipurpose\Http\Controllers\Auth;
+use ApiMultipurpose\Http\Controllers\UserController;
 
 Route::post('/register', [Auth::class, 'register']);
 Route::post('/login', [Auth::class, 'login']);

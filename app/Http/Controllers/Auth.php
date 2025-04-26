@@ -2,21 +2,16 @@
 
 namespace ApiMultipurpose\Http\Controllers;
 
-use ApiMultipurpose\Models\User;
 use Illuminate\Http\Request;
+use ApiMultipurpose\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use ApiMultipurpose\Http\Requests\LoginRequest;
 
 class Auth extends Controller
 {
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -27,28 +22,23 @@ class Auth extends Controller
                 'token' => $user->createToken('token-name')->plainTextToken,
                 'userName' => $user->name
             ], 200);
-        
     }
 
-    public function logout(Request $request)
+
+    public function logout()
     {
-        $request->user()->currentAccessToken()->delete();
+        auth()->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully']);
     }
 
     public function register(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string',
-        ]);
 
         $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -59,5 +49,5 @@ class Auth extends Controller
             'user' => $user
         ]);
     }
-
 }
+
