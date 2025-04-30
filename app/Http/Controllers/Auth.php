@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use ApiMultipurpose\Models\User;
 use Illuminate\Support\Facades\Hash;
 use ApiMultipurpose\Http\Requests\LoginRequest;
+use ApiMultipurpose\Http\Requests\RegisterRequest;
 
 class Auth extends Controller
 {
@@ -32,7 +33,7 @@ class Auth extends Controller
         return response()->json(['message' => 'Logged out successfully']);
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
 
         $user = User::create([

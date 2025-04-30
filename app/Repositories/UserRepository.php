@@ -25,10 +25,10 @@ class UserRepository implements UserRepositoryInterface
 
     public function update(string $id, array $data)
     {
-        $update = $this->model::find($id);
+        $update = $this->model::find($id)->update($data);
 
         if ($update)
-           return $this->model::find($id)->update($data);
+           return $this->model::find($id);
 
         throw new \Exception('User not found');
     }

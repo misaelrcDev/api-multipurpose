@@ -11,7 +11,7 @@ Route::post('/logout', [Auth::class, 'logout'])->middleware('auth:sanctum');
 Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], fn () => [
     Route::get('/', [UserController::class, 'index']),
     Route::get('/{id}', [UserController::class, 'show']),
-    Route::put('/{id}', [UserController::class, 'update']),
+    Route::put('/{user}', [UserController::class, 'update']),
     Route::delete('/{id}', [UserController::class, 'destroy']),
 ]);
 

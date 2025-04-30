@@ -26,6 +26,6 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
-        return $this->service->find($id);
+        return $this->service->destroy($id);
     }
 }
