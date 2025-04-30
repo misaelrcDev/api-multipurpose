@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('conversation_id'); //Qual conversa pertence
+            $table->unsignedBigInteger('sender_id'); // Quem enviou a mensagem
+            $table->text('content'); // Conteúdo da mensagem
             $table->timestamps();
+
+            $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');
+            $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
