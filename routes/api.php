@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use ApiMultipurpose\Http\Controllers\Auth;
+use ApiMultipurpose\Http\Controllers\ConversationController;
 use ApiMultipurpose\Http\Controllers\UserController;
 
 Route::post('/register', [Auth::class, 'register']);
@@ -14,6 +15,8 @@ Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], fn () => [
     Route::put('/{user}', [UserController::class, 'update']),
     Route::delete('/{id}', [UserController::class, 'destroy']),
 ]);
+
+Route::get('/conversations', [ConversationController::class, 'index'])->middleware('auth:sanctum');
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
