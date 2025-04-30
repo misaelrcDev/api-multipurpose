@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
+    //Listar conversas do usuario
     public function index()
     {
         $user = auth()->user();
@@ -19,6 +20,7 @@ class ConversationController extends Controller
         ], 200);
     }
 
+    // Criar nova conversa
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -38,5 +40,36 @@ class ConversationController extends Controller
             'message' => 'Conversation created successfully',
             'data' => $conversation,
         ], 201);
+    }
+
+    // Detalhes de uma conversa
+    public function show($id)
+    {
+        $conversation = Conversation::with('users', 'messages')->find($id);
+
+        if (!$conversation) {
+            return response()->json(['message' => 'Conversation not found',], 404);
+        }
+
+        return response()->json([
+            'message' => 'success',
+            'data' => $conversation,
+        ], 404);
+    }
+
+    // Excluir conversa
+    public function destroy($id)
+    {
+        $conversation = Conversation::find($id);
+
+        if (!$conversation) {
+            return response()->json(['message' => 'Conversation not found',], 404);
+        }
+
+        $conversation->delete();
+
+        return response()->json([
+            'message' => 'Conversation deleted successfully',
+        ], 200);
     }
 }
