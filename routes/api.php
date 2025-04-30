@@ -15,11 +15,9 @@ Route::group(['prefix' => 'users', 'middleware' => 'auth:sanctum'], fn () => [
     Route::put('/{user}', [UserController::class, 'update']),
     Route::delete('/{id}', [UserController::class, 'destroy']),
 ]);
-
+// Rotas de conversa
 Route::get('/conversations', [ConversationController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/conversations', [ConversationController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/conversations{id}', [ConversationController::class, 'show'])->middleware('auth:sanctum');
+Route::delete('/conversations{id}', [ConversationController::class, 'destroy'])->middleware('auth:sanctum');
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
