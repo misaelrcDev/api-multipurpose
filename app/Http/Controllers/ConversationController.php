@@ -3,73 +3,34 @@
 namespace ApiMultipurpose\Http\Controllers;
 
 use ApiMultipurpose\Models\Conversation;
+use ApiMultipurpose\Services\ConversationServiceInterface;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
+    public function __construct(protected ConversationServiceInterface $service) {}
     //Listar conversas do usuario
     public function index()
     {
-        $user = auth()->user();
+        return $this->service->getByUser(auth()->id());
 
-        $conversations = $user->conversations; // Relacionamento entre users e conversations
-
-        return response()->json([
-            'message' => 'success',
-            'data' => $conversations,
-        ], 200);
     }
 
     // Criar nova conversa
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'type' => 'required|string|in:private,group',
-            'participants' => 'required|array|min:1', // IDs dos participantes
-        ]);
-
-        $conversation = Conversation::create([
-            'type' => $data['type'],
-            'created_by' => auth()->id(),
-        ]);
-
-        // Relaciona os participantes à conversa
-        $conversation->users()->attach(array_merge($data['participants'], [auth()->id()]));
-
-        return response()->json([
-            'message' => 'Conversation created successfully',
-            'data' => $conversation,
-        ], 201);
+        return $this->service->store($request->all(), auth()->id());
     }
 
     // Detalhes de uma conversa
     public function show($id)
     {
-        $conversation = Conversation::with('users', 'messages')->find($id);
-
-        if (!$conversation) {
-            return response()->json(['message' => 'Conversation not found',], 404);
-        }
-
-        return response()->json([
-            'message' => 'success',
-            'data' => $conversation,
-        ], 404);
+        return $this->service->show($id, auth()->id());
     }
 
     // Excluir conversa
     public function destroy($id)
     {
-        $conversation = Conversation::find($id);
-
-        if (!$conversation) {
-            return response()->json(['message' => 'Conversation not found',], 404);
-        }
-
-        $conversation->delete();
-
-        return response()->json([
-            'message' => 'Conversation deleted successfully',
-        ], 200);
+        return $this->service->destroy($id);
     }
 }

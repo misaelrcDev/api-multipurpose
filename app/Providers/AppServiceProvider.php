@@ -19,6 +19,14 @@ class AppServiceProvider extends ServiceProvider
             \ApiMultipurpose\Services\UserServiceInterface::class,
             \ApiMultipurpose\Services\UserService::class
         );
+        $this->app->bind(
+            \ApiMultipurpose\Repositories\ConversationRepositoryInterface::class,
+            \ApiMultipurpose\Repositories\ConversationRepository::class
+        );
+        $this->app->bind(
+            \ApiMultipurpose\Services\ConversationServiceInterface::class,
+            \ApiMultipurpose\Services\ConversationService::class
+        );
     }
 
     /**
