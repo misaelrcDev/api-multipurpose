@@ -55,7 +55,7 @@ class ConversationService implements ConversationServiceInterface
             'data' => $conversation->load('users', 'messages'),
         ]);
     }
-
+  
     public function store(array $data, int $creatorId)
     {
         $validator = Validator::make($data, [
