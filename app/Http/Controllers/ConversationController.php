@@ -2,6 +2,7 @@
 
 namespace ApiMultipurpose\Http\Controllers;
 
+use ApiMultipurpose\Http\Requests\ConversationRequest;
 use ApiMultipurpose\Models\Conversation;
 use ApiMultipurpose\Services\ConversationServiceInterface;
 use Illuminate\Http\Request;
@@ -17,9 +18,9 @@ class ConversationController extends Controller
     }
 
     // Criar nova conversa
-    public function store(Request $request)
+    public function store(ConversationRequest $request)
     {
-        return $this->service->store($request->all(), auth()->id());
+        return $this->service->store($request->validated(), auth()->id());
     }
 
     // Detalhes de uma conversa

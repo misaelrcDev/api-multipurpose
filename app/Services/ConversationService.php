@@ -55,19 +55,9 @@ class ConversationService implements ConversationServiceInterface
             'data' => $conversation->load('users', 'messages'),
         ]);
     }
-  
+
     public function store(array $data, int $creatorId)
     {
-        $validator = Validator::make($data, [
-            'type' => 'required|string|in:group,private',
-            'participants' => 'required|array|min:1',
-            'participants.*' => 'exists:users,id',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()], 400);
-        }
-
         $conversation = $this->repository->store([
             'type' => $data['type'],
             'created_by' => $creatorId,
