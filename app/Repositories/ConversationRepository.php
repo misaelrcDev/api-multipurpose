@@ -30,11 +30,29 @@ class ConversationRepository implements ConversationRepositoryInterface
         return $this->model::create($data);
     }
 
-    public function destroy(string $id)
+    public function storeWithParticipants(array $data, int $creatorId)
     {
-        return $this->model::find($id)->delete();
+        $conversation = $this->store([
+            'type' => $data['type'],
+            'created_by' => $creatorId,
+        ]);
+
+        $participantIds = array_merge($data['participants'], [$creatorId]);
+        $conversation->users()->attach($participantIds);
+
+        return $conversation->load('users');
     }
 
+    public function show(string $id, int $userId)
+    {
+        return $this->model::where('id', $id)
+            ->whereHas('users', fn ($q) => $q->where('user_id', $userId))
+            ->with(['users', 'messages'])
+            ->first();
+    }
 
-
+    public function destroy(string $id)
+    {
+        return $this->model::findOrFail($id)->delete();
+    }
 }

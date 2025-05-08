@@ -3,9 +3,8 @@
 namespace ApiMultipurpose\Http\Controllers;
 
 use ApiMultipurpose\Http\Requests\ConversationRequest;
-use ApiMultipurpose\Models\Conversation;
+use ApiMultipurpose\Http\Requests\DestroyConversationRequest;
 use ApiMultipurpose\Services\ConversationServiceInterface;
-use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
@@ -16,22 +15,19 @@ class ConversationController extends Controller
         return $this->service->getByUser(auth()->id());
 
     }
-
     // Criar nova conversa
     public function store(ConversationRequest $request)
     {
         return $this->service->store($request->validated(), auth()->id());
     }
-
     // Detalhes de uma conversa
     public function show($id)
     {
         return $this->service->show($id, auth()->id());
     }
-
     // Excluir conversa
-    public function destroy($id)
+    public function destroy(DestroyConversationRequest $request,  string $conversation)
     {
-        return $this->service->destroy($id);
+        return $this->service->destroy($conversation);
     }
 }

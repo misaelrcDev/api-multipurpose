@@ -21,6 +21,12 @@ class ConversationRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->isMethod('DELETE')) {
+            return [
+                'id' => 'required|exists:conversations,id',
+            ];
+        }
+
         return [
             'type' => 'required|string|in:group,private',
             'participants' => 'required|array|min:1',
@@ -31,6 +37,8 @@ class ConversationRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'id.required' => 'O ID da conversa é obrigatório.',
+            'id.exists' => 'A conversa especificada não existe.',
             'type.required' => 'O campo tipo é obrigatório.',
             'type.in' => 'O tipo deve ser "group" ou "private".',
             'participants.required' => 'A conversa precisa ter participantes.',

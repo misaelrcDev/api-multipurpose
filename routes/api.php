@@ -23,7 +23,7 @@ Route::group(['prefix' => 'conversations', 'middleware' => 'auth:sanctum'], fn (
     Route::get('/', [ConversationController::class, 'index']),
     Route::post('/', [ConversationController::class, 'store']),
     Route::get('/{id}', [ConversationController::class, 'show']),
-    Route::delete('/{id}', [ConversationController::class, 'destroy']),
+    Route::delete('/{conversation}', [ConversationController::class, 'destroy']),
 ]);
 
 // Rotas de mensagem
@@ -31,8 +31,5 @@ Route::group(['prefix' => 'messages', 'middleware' => 'auth:sanctum'], fn () => 
     Route::get('/{conversationId}', [MessageController::class, 'index']),
     Route::post('/', [MessageController::class, 'store']),
 ]);
-// Route::get('/conversations', [ConversationController::class, 'index'])->middleware('auth:sanctum');
-// Route::post('/conversations', [ConversationController::class, 'store'])->middleware('auth:sanctum');
-// Route::get('/conversations{id}', [ConversationController::class, 'show'])->middleware('auth:sanctum');
-// Route::delete('/conversations{id}', [ConversationController::class, 'destroy'])->middleware('auth:sanctum');
+
 
