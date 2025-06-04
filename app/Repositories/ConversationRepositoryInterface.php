@@ -5,7 +5,7 @@ namespace ApiMultipurpose\Repositories;
 interface ConversationRepositoryInterface
 {
     public function all();
-    public function getByUser(int $userId);
+    public function getByUser(int $userId): array;
     public function find(string $id);
     public function store(array $data);
     public function storeWithParticipants(array $data, int $creatorId);

@@ -10,6 +10,12 @@ class MessageController extends Controller
     // Listar mensagens de uma conversa
     public function index($conversationId)
     {
+        $conversation = auth()->user()->conversations()->find($conversationId);
+        if (!$conversation) {
+            return response()->json([
+                'message' => 'Conversation not found',
+            ], 404);
+        }
         $messages = Message::where('conversation_id', $conversationId)->get();
 
         return response()->json([
