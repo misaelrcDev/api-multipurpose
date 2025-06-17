@@ -7,7 +7,7 @@ use ApiMultipurpose\Http\Controllers\MessageController;
 use ApiMultipurpose\Http\Controllers\UserController;
 // Rotas de autenticação
 Route::post('/register', [Auth::class, 'register']);
-Route::post('/login', [Auth::class, 'login']);
+Route::post('/login', [Auth::class, 'login'])->middleware('throttle:5,1'); // Limita a 5 tentativas de login por minuto
 Route::post('/logout', [Auth::class, 'logout'])->middleware('auth:sanctum');
 
 // Rotas de Usuario
