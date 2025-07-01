@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // 'api' => [
+        //     'driver' => 'session', // <- ESSENCIAL para cookies funcionarem!
+        //     'provider' => 'users',
+        // ],
     ],
 
     /*
